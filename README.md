@@ -3,7 +3,7 @@
 Grand Final deck, NICTSeD 2026 CyberSAFE Challenge Trophy.
 SMK St Bernadette's Convent, Perak.
 
-Single-file HTML deck. 30 slides: 21 stage slides plus 9 evidence-bank slides for Q&A. Framework: MAHIR, five blocks and nine mechanisms.
+Single-file HTML deck. 30 slides: 21 stage slides plus 9 evidence-bank slides for Q&A. Framework: MAHIR, five rules for trustworthy AI.
 
 ## Controls
 
