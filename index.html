@@ -88,7 +88,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #hud .btn.home{border-color:var(--gold);color:var(--kicker);font-weight:600}
 #hud .btn.home:hover{background:var(--gold);color:#03173d}
 #stage{position:absolute;inset:48px 0 0 0;display:flex;align-items:center;justify-content:center}
-#frame{width:1600px;height:900px;position:relative;transform-origin:center center}
+#frame{width:1600px;height:900px;flex:0 0 auto;position:relative;transform-origin:center center}
+/* flex:0 0 auto is load bearing. #stage is a flex container, so without it the 1600px
+   design canvas is shrunk to the stage width and then scaled again, and every slide
+   reflows differently on every screen size. */
 .slide{position:absolute;inset:0;display:none}
 .slide.on{display:block}
 .inner{position:absolute;inset:0;padding:60px 90px 70px;display:flex;flex-direction:column;justify-content:center}
@@ -734,6 +737,10 @@ function hint(show){ const el=$('#hintTap'); if(!el) return;
   el.classList.toggle('on', !!show);
   clearTimeout(hintT); if(show) hintT=setTimeout(()=>el.classList.remove('on'), 7000); }
 
+/* the stage changes size when the sidebar collapses and when the portal iframe resizes,
+   and the grid has a .25s transition, so a one-shot fit() on load measures too early */
+try{ new ResizeObserver(()=>fit()).observe($('#stage')); }catch(e){}
+[60,180,320,600].forEach(ms=>setTimeout(fit,ms));
 window.addEventListener('resize',fit);window.addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1));if(n&&n!==cur)go(n);});
 window.go=go;window.next=()=>go(cur+1);window.prev=()=>go(cur-1);
 window.D={total:TOTAL,get cur(){return cur}};
