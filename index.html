@@ -718,11 +718,13 @@ if(HUB && !EMBED) $('#app').classList.add('hub');
    slides that are plain text/card/quote/pillar layouts, never a custom
    SVG chart, so nothing needs per-diagram recolouring. */
 const ACT_ACC = {1:['#E6A50A','#ffcf5c'],2:['#3da9fc','#7fd1ff'],3:['#ff6b6b','#ffa8a8'],4:['#c084fc','#f0abfc'],5:['#22d3ee','#67e8f9'],6:['#818cf8','#c7d2fe'],7:['#4ade80','#a7f3d0'],8:['#fb923c','#fdba74'],9:['#e879f9','#f5d0fe'],10:['#f472b6','#fbcfe8'],11:['#94a3b8','#cbd5e1']};
+const ACT_BGACC = {3:'#8B5A2B'}; /* Act 3 ('The evidence', slides 9-12) page-background source colour overridden from red to choco/brown per Bro Taufik request 9 Sep 2026 -- only the bg/bg2/glow wash, not --acc itself, so numbers/progress bar/kicker keep their own colours */
 const BRIGHT_SLIDES = new Set([8,12,16,18,22,28,31]);
 function paint(n){
   const a = (typeof CLUSTER!=='undefined' ? (CLUSTER[n]|0)+1 : 1);
   const c = ACT_ACC[a] || ACT_ACC[1];
   const acc = c[0];
+  const bgAcc = ACT_BGACC[a] || acc;
   document.documentElement.style.setProperty('--acc', c[0]);
   document.documentElement.style.setProperty('--acc2', c[1]);
   const vars = BRIGHT_SLIDES.has(n) ? {
@@ -748,9 +750,9 @@ function paint(n){
     shadow:'rgba(0,0,0,.6)',
     cardshadow:'none'
   } : {
-    bg:`color-mix(in srgb, ${acc} 14%, #05070c)`,
-    bg2:`color-mix(in srgb, ${acc} 20%, #05070c)`,
-    glow:`color-mix(in srgb, ${acc} 30%, #05070c)`,
+    bg:`color-mix(in srgb, ${bgAcc} 14%, #05070c)`,
+    bg2:`color-mix(in srgb, ${bgAcc} 20%, #05070c)`,
+    glow:`color-mix(in srgb, ${bgAcc} 30%, #05070c)`,
     ink:'#ffffff',
     text:'#dfe6f5',
     muted:'#b7c3dc',
