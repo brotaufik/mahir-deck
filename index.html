@@ -97,7 +97,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .inner{position:absolute;inset:0;padding:60px 90px 70px;display:flex;flex-direction:column;justify-content:center}
 .kicker{font-size:15px;letter-spacing:.28em;color:var(--kicker);text-transform:uppercase;font-weight:600;margin-bottom:14px}
 h1{font-size:54px;line-height:1.1;font-weight:700;margin-bottom:22px;max-width:1350px;color:var(--ink)}
-h1.h-title{font-size:120px;letter-spacing:.02em;line-height:1;margin:6px 0 18px}
+h1.h-title{font-size:120px;letter-spacing:.02em;line-height:1;margin:6px 0 18px;color:var(--gold)}
 h1.h-quote{font-size:60px;line-height:1.18;max-width:1400px;margin-bottom:34px}
 .body{font-size:24px;line-height:1.5;color:var(--text);max-width:1250px;margin-bottom:34px;font-weight:300}
 .body b{color:var(--ink);font-weight:600}
@@ -809,17 +809,29 @@ document.addEventListener('click',e=>{
 });
 
 /* ---------- click anywhere to advance ---------- */
+/* All body text must stay selectable and copyable, including via a fast double or triple
+   click (word / paragraph select). A double-click fires two separate click events, and the
+   FIRST one happens before the browser has selected anything, so an immediate advance-on-click
+   was hijacking that first click and jumping the slide before the word could be selected.
+   Fix: defer the advance briefly and cancel it if a dblclick follows or a selection exists
+   once the timer fires. */
 const NOADV = '[data-modal],button,a,input,select,textarea,label,#ov,#hud,#sb,#results,.chead,li,mark,summary,details';
+let advTimer=null;
 $('#stage').addEventListener('click', e=>{
   if($('#ov').classList.contains('on')) return;
   if(e.target.closest(NOADV)) return;
   if(window.getSelection && String(window.getSelection())) return;
   if(e.target.closest('#zoneBack')){ go(cur-1); return; }
-  if(!t0 && cur===1) startTimer();
-  go(cur+1);
+  clearTimeout(advTimer);
+  advTimer=setTimeout(()=>{
+    if(window.getSelection && String(window.getSelection())) return;
+    if(!t0 && cur===1) startTimer();
+    go(cur+1);
+  }, 300);
 });
-$('#zoneBack').addEventListener('click', e=>{ e.stopPropagation(); go(cur-1); });
-$('#zoneFwd').addEventListener('click', e=>{ e.stopPropagation(); if(!t0&&cur===1)startTimer(); go(cur+1); });
+$('#stage').addEventListener('dblclick', ()=>{ clearTimeout(advTimer); });
+$('#zoneBack').addEventListener('click', e=>{ e.stopPropagation(); clearTimeout(advTimer); go(cur-1); });
+$('#zoneFwd').addEventListener('click', e=>{ e.stopPropagation(); clearTimeout(advTimer); if(!t0&&cur===1)startTimer(); go(cur+1); });
 
 /* the hint shows on slide 1 and after 12 s of no input, then fades */
 let hintT=null;
